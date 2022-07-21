@@ -40,7 +40,7 @@
 <body>
     @include('includes/toastr')
     @include('includes/message-block')
-    @include('includes/header2')
+    {{-- @include('includes/header2') --}}
     <div class="container">
         @yield('csrf')
         @yield('css')

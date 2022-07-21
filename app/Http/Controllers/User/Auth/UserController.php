@@ -1,15 +1,19 @@
 <?php
 
-namespace App\Http\Controllers\User;
+namespace App\Http\Controllers\User\Auth;
 
 use App\Http\Controllers\Controller;
+use App\Models\Permission;
+use App\Models\Role;
 use App\Models\User;
+use App\Traits\PermissionsTrait;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Auth;
 use Illuminate\Support\Facades\Hash;
 
 class UserController extends Controller
 {
+    use PermissionsTrait;
     /**
      * Display a listing of the resource.
      *
@@ -40,13 +44,7 @@ class UserController extends Controller
     {
         try {
             if (Auth::guard('user')->attempt($request->only('email', 'password'))) {
-                $userstatus = Auth::guard('user')->user()->active_status;
-                if ($userstatus === 1) {
-                    return redirect()->route('user.Feed')->with('success', __('message.Loginsuccess'));
-                } else {
-                    Auth::guard('user')->logout();
-                    return redirect()->route('user.Login')->with('error', 'Your account is Inactive');
-                }
+                return redirect()->route('user.Feed')->with('success', 'Login Success');
             } else {
                 return back()->with('error', 'Please Check Credentials');
             }
@@ -56,8 +54,18 @@ class UserController extends Controller
     }
     public function userFeed(Request $request)
     {
-        $userdata = User::with('languages')->where('id', Auth::guard('user')->user()->id)->get();
+        $userdata = User::all();
+        // $roles = Role::where('name', 'editor')->first();
+        $permissions = Permission::first();
+        $userdata->permissions()->attach($permissions);
+        dd($permissions);
         return view('user.userFeed', ['params' => $request->sorting, 'user' => $userdata]);
+    }
+
+    public function logout()
+    {
+        Auth::guard('user')->logout();
+        return redirect()->route('user.Login');
     }
 
     public function index()

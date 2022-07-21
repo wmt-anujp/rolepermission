@@ -9,11 +9,9 @@
             </button>
             <div class="collapse navbar-collapse" id="navbarSupportedContent">
                 <ul class="navbar-nav ms-auto me-5 mb-2 mb-lg-0">
-                    @if (Auth::guard('user')->check())
-                    @endif
-                        <li class="nav-item me-4">
-                            <a href="{{(Auth::guard('admin')->check() ? route('admin.Logout'): route('user.Logout') )}}" class="nav-link btn btn-sm btn-danger" style="color: white">Logout</a>
-                        </li>
+                    <li class="nav-item me-4">
+                        <a href="" class="nav-link btn btn-sm btn-danger" style="color: white">Logout</a>
+                    </li>
                 </ul>
             </div>
         </div>

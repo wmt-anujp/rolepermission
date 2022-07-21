@@ -18,7 +18,7 @@ class UserAuth
     public function handle(Request $request, Closure $next, $guards = null)
     {
         if (!Auth::guard($guards)->check()) {
-            return redirect()->route('user.Login');
+            return redirect()->back();
         }
         return $next($request);
     }

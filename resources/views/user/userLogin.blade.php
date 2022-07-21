@@ -33,9 +33,6 @@
             <button type="submit" class="login-button" title="Log In" id="login">Login</button>
         </form>
     </div>
-    <div class="box">
-      <p>Dont have account? <a href="{{route('user.Register')}}">Signup</a></p>
-    </div>
 </div>
 @endsection
 @section('js')
