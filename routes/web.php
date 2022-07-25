@@ -3,6 +3,7 @@
 use App\Http\Controllers\Admin\Auth\AdminController;
 use App\Http\Controllers\User\Auth\UserController;
 use App\Models\User;
+use Illuminate\Support\Facades\Auth;
 use Illuminate\Support\Facades\Route;
 
 /*
@@ -25,7 +26,7 @@ Route::namespace('Admin')->middleware('backbutton')->group(function () {
     Route::get('admin-dashboard', [AdminController::class, 'getadminDashboard'])->name('admin.Dashboard');
 });
 Route::resource('user', UserController::class)->middleware(['userauth:user']);
-Route::namespace('User')->middleware('backbutton')->group(function () {
+Route::namespace('User')->group(function () {
     Route::namespace('Auth')->group(function () {
         Route::get('/', function () {
             return view('user.userLogin');
@@ -35,7 +36,13 @@ Route::namespace('User')->middleware('backbutton')->group(function () {
         Route::post('user-login', [UserController::class, 'userLogin'])->name('user.Logins');
         Route::get('logout', [UserController::class, 'logout'])->name('logout');
     });
-    Route::middleware('userauth:user')->group(function () {
+    Route::middleware(['userauth:user', 'role:editor'])->group(function () {
         Route::get('user-feed', [UserController::class, 'userFeed'])->name('user.Feed');
+        Route::get('role', function () {
+            $user = Auth::user();
+            if ($user->hasRole('editor')) {
+                dd('editor');
+            }
+        });
     });
 });

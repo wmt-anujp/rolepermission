@@ -54,11 +54,16 @@ class UserController extends Controller
     }
     public function userFeed(Request $request)
     {
-        $userdata = User::all();
-        // $roles = Role::where('name', 'editor')->first();
-        $permissions = Permission::first();
-        $userdata->permissions()->attach($permissions);
-        dd($permissions);
+        $userdata = User::with(['permissions', 'roles'])->where('id', Auth::guard('user')->user()->id)->get();
+        // $roles = Role::where('name', 'Editor')->first();
+        // $userdata->roles->attach($roles);
+        // dd($userdata->roles);
+        // $permissions = Permission::first();
+        // $userdata->permissions()->attach($permissions);
+        // dd($userdata->hasPermission('Add Post'));
+        // dd($userdata->can('App Post'));
+        // dd($permissions);
+        // dd($userdata->hasRole('Editor'));
         return view('user.userFeed', ['params' => $request->sorting, 'user' => $userdata]);
     }
 

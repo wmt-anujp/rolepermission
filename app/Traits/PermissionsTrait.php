@@ -3,6 +3,7 @@
 namespace App\Traits;
 
 use App\Models\Permission;
+use App\Models\Role;
 
 trait PermissionsTrait
 {
@@ -12,11 +13,21 @@ trait PermissionsTrait
         return Permission::whereIn('name', $permission)->get();
     }
 
-    // checking wheather user has permissions or not
+    // checking whether user has permissions or not
     public function hasPermission($permission)
     {
         return (bool) $this->permissions->where('name', $permission->name)->count();
     }
+
+    // public function permissions()
+    // {
+    //     return $this->belongsToMany(Permission::class, 'users_permissions');
+    // }
+
+    // public function roles()
+    // {
+    //     return $this->hasOne(Role::class, 'users_roles');
+    // }
 
     public function hasRole(...$roles)
     {
@@ -28,6 +39,17 @@ trait PermissionsTrait
         return false;
     }
 
+    // checking permission via role
+    public function hasPermissionThroughRole($permissions)
+    {
+        foreach ($permissions->roles as $role) {
+            if ($this->roles->contains($role)) {
+                return true;
+            }
+        }
+    }
+
+    // checking is user having to perform some particular action or not
     public function hasPermissionTo($permission)
     {
         return $this->hasPermissionThroughRole($permission) || $this->hasPermission($permission);
@@ -42,15 +64,5 @@ trait PermissionsTrait
         }
         $this->permissions()->saveMany($permissions);
         return $this;
-    }
-
-    // checking permission via role
-    public function hasPermissionThroughRole($permissions)
-    {
-        foreach ($permissions->roles as $role) {
-            if ($this->roles->contains($role)) {
-                return true;
-            }
-        }
     }
 }
